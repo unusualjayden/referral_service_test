@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="card">
+        <div class="card-content">
+            <div class="media">
+                <div class="media-content">
+                    <div class="field">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <label class="label" for="{{ field.id_for_label }}">
+                                    Введите новое имя
+                                </label>
+                                <input class="input is-success is-quarter"
+                                       type="text"
+                                       name="{{ field.name }}"
+                                       id="{{ field.id_for_label }}"
+                                       {% if form.value != None %}value="{{ field.value|stringformat:'s' }}"{% endif %}
+                                       maxlength="{{ field.field.max_length }}"
+                                       {% if field.required %}required{% endif %}>
+                            {% endfor %}
+                            <br>
+                            <br>
+                            <button class="button is-dark is-outlined" type="submit">Сохранить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

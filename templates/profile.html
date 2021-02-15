@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="card">
+        <div class="card-content">
+            <div class="media">
+                <div class="media-left">
+                    <figure class="image is-48x48">
+                        <img src="https://img.icons8.com/cotton/100/000000/gender-neutral-user--v1.png"/>
+                    </figure>
+                </div>
+                <div class="media-content">
+
+                    {% if customuser.username %}
+                        <p class="title is-4">{{ customuser.username }}</p>
+                    {% else %}
+                        <p class="title is-4">Аноним</p>
+                    {% endif %}
+
+                    <a class="link subtitle has-text-link-dark" href="{% url "referral:edit-name" %}">
+                        Редактировать имя
+                    </a>
+                    <p class="subtitle is-6">{{ customuser.get_formatted_phone_number }}</p>
+                    <p class="subtitle is-6">Ваш инвайт-код: {{ customuser.invite_code }}</p>
+
+                    {% if customuser.referrer %}
+                        <p class="subtitle is-5">Ваш реферрал:</p>
+
+                        {% if customuser.referrer.username %}
+                            <p class="title is-5">{{ customuser.referrer.username }}</p>
+                        {% else %}
+                            <p class="title is-5">Аноним</p>
+                        {% endif %}
+
+                        <p class="subtitle is-6">{{ customuser.referrer.get_formatted_phone_number }}</p>
+                    {% endif %}
+
+                </div>
+            </div>
+            <div class="content">
+                <div class="media-content">
+                    <p class="title is-4">Реферралы</p>
+                    <p class="subtitle is-6">Люди которые зарегистрировались с вашим инвайт-кодом</p>
+                </div>
+                <br>
+
+                {% if form and not customuser.referrer %}
+                    <div class="field">
+                        <form action="" method="post">
+                            {% csrf_token %}
+
+                            {% for field in form %}
+                                <label class="label" for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                                <input class="input is-success is-quarter"
+                                       type="text"
+                                       pattern="^[A-Z0-9]*$"
+                                       placeholder="123ABC"
+                                       name="{{ field.name }}"
+                                       id="{{ field.id_for_label }}"
+                                       {% if form.value != None %}value="{{ field.value|stringformat:'s' }}"{% endif %}
+                                       maxlength="{{ field.field.max_length }}"
+                                       {% if field.required %}required{% endif %}>
+                            {% endfor %}
+
+                            <br>
+                            <br>
+                            <button class="button is-dark is-outlined" type="submit">Отправить</button>
+                        </form>
+                    </div>
+                {% endif %}
+
+                {% if message %}
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="subtitle is-6">Такого инвайт-кода не существует</p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if referrers %}
+                    <div class="media-content">
+
+                        {% for referrer in referrers %}
+
+                            {% if referrer.username %}
+                                <p class="title is-5">{{ referrer.username }}</p>
+                            {% else %}
+                                <p class="title is-5">Аноним</p>
+                            {% endif %}
+
+                            <p class="subtitle is-6">{{ referrer.get_formatted_phone_number }}</p>
+                            <p class="subtitle is-6">Дата регистрации - {{ referrer.created_on }}</p>
+                            <br>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    <div class="media-content">
+                        <p class="title is-5">У вас пока нет реферралов</p>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="card">
+        <div class="card-content">
+            <div class="media">
+                <div class="media-content">
+                    <div class="field">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <label class="label" for="{{ field.id_for_label }}">
+                                    {{ field.label_tag }}
+                                </label>
+                                <input class="input is-success is-quarter"
+                                       type="number"
+                                       pattern="^[0-9]{4}$"
+                                       placeholder="0000"
+                                       name="{{ field.name }}"
+                                       id="{{ field.id_for_label }}"
+                                       {% if form.value != None %}value="{{ field.value|stringformat:'s' }}"{% endif %}
+                                       maxlength="{{ field.field.max_length }}"
+                                       {% if field.required %}required{% endif %}>
+                            {% endfor %}
+                            <br>
+                            <br>
+                            <button class="button is-dark is-outlined" type="submit">Отправить</button>
+                        </form>
+                        <br>
+                        <br>
+                        <p id="sms" class="subtitle is-5"></p>
+                        <p class="subtitle is-5">(Просто нажмите на кнопку это симуляция)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 5;
+        let downloadTimer = setInterval(function () {
+            if (timeLeft <= 0) {
+                clearInterval(downloadTimer);
+            }
+            document.getElementById("sms").innerHTML = 'Сообщение придет вам через ' + timeLeft.toString() + ' секунд';
+            timeLeft -= 1;
+        }, 1000);
+    </script>
+{% endblock %}
